@@ -76,6 +76,11 @@ function handleChoice(choice) {
         return;
     }
 
+    if (choice.action === 'learn_from_ai') {
+        handleAILearning();
+        return; // Stay on the intro screen after showing advice
+    }
+
     const currentSceneData = gameData.scenarios[gameState.currentScene];
     
     if (choice.stats) {
@@ -154,6 +159,20 @@ async function callGemini(prompt) {
         console.error("Error calling Gemini API:", error);
         return `Maaf, terdapat ralat semasa menghubungi penasihat istana. ${error.message}`;
     }
+}
+
+async function handleAILearning() {
+    const prompt = `Anda adalah seorang Penasihat Istana yang amat bijaksana di Tanah Melayu pada abad ke-15. Seorang pembesar muda akan memulakan pengembaraan pertamanya dan meminta tunjuk ajar.
+
+    Berikan 3 nasihat utama yang paling penting untuknya. Nasihat perlu merangkumi:
+    1.  Maksud sebenar 'Daulat' dan 'Waadat'.
+    2.  Cara terbaik untuk berinteraksi dengan Raja-raja dan rakyat jelata.
+    3.  Amaran tentang bahaya yang mungkin menantinya.
+
+    Sampaikan nasihat dalam bentuk senarai bernombor, menggunakan bahasa Melayu klasik yang mudah difahami dan berwibawa.`;
+    
+    const learning_text = await callGemini(prompt);
+    showModal("Tunjuk Ajar dari Penasihat Istana", learning_text, "advice");
 }
 
 async function handleGeminiAdvice() {
@@ -250,12 +269,21 @@ function renderChoices(choices) {
     choices.forEach(choice => {
         const button = document.createElement('button');
         button.className = `w-full text-left p-4 bg-gradient-to-r from-amber-100 to-yellow-100 hover:from-amber-200 hover:to-yellow-200 rounded-lg border border-amber-300 transition-all duration-200 hover:shadow-md group`;
-        button.onclick = () => handleChoice(choice);
-        button.innerHTML = `
-            <div class="flex items-center justify-between">
-                <span class="font-medium text-amber-900 group-hover:text-amber-900">${choice.text}</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-amber-600 group-hover:translate-x-1 transition-transform"><polyline points="9 18 15 12 9 6"></polyline></svg>
-            </div>`;
+        
+        // Handle different action types
+        if (choice.action === 'learn_from_ai') {
+             button.className = 'w-full text-left p-4 mt-2 bg-gradient-to-r from-blue-100 to-sky-100 hover:from-blue-200 hover:to-sky-200 rounded-lg border border-blue-300 transition-all duration-200 hover:shadow-md group';
+             button.onclick = () => handleChoice(choice);
+             button.innerHTML = `<div class="flex items-center justify-between"><span class="font-medium text-blue-900">${choice.text}</span><span class="text-lg">🎓</span></div>`;
+        } else {
+             button.onclick = () => handleChoice(choice);
+             button.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <span class="font-medium text-amber-900 group-hover:text-amber-900">${choice.text}</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-amber-600 group-hover:translate-x-1 transition-transform"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </div>`;
+        }
+        
         choicesContainer.appendChild(button);
     });
     
@@ -301,7 +329,7 @@ function typeText(text, callback) {
 function showModal(title, message, iconType = "info") {
     const icons = {
         trophy: '🏆', map: '🗺️', info: 'ℹ️', error: '❌', confirm_restart: '🔄',
-        advice: '🤔', decree: '📜', loading: '⏳'
+        advice: '🎓', decree: '📜', loading: '⏳'
     };
     
     let buttons = `<button id="modal-close" class="px-6 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600">Tutup</button>`;
@@ -317,7 +345,7 @@ function showModal(title, message, iconType = "info") {
     modalContentElement.innerHTML = `
         <div class="text-5xl mb-4">${icons[iconType]}</div>
         <h2 class="text-2xl font-bold mb-2 text-gray-800">${title}</h2>
-        <p class="text-gray-600 mb-6 whitespace-pre-wrap">${message}</p>
+        <p class="text-gray-600 mb-6 whitespace-pre-wrap text-left">${message}</p>
         <div class="flex justify-center">${buttons}</div>
     `;
     modalElement.classList.remove('hidden');
