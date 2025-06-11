@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legenda Daulat - Pengembaraan RPG</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        @keyframes bounce-in {
+            0% { transform: scale(0.9); opacity: 0; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .modal {
+            animation: bounce-in 0.3s ease-out;
+        }
+        .stat-change {
+            position: absolute;
+            right: -20px;
+            top: 0;
+            animation: fade-up 1s ease-out forwards;
+        }
+        @keyframes fade-up {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-red-50 p-4">
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-6">
+            <h1 class="text-4xl font-bold text-amber-900 mb-2 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 mr-3 text-yellow-600"><path d="m14 6 4-4 6 6-4 4"></path><path d="m5 11 4 4 6-6-4-4"></path><path d="M2 13 4 8l2 2-2 5Z"></path><path d="M22 13 20 8l-2 2 2 5Z"></path><path d="M12 22 4 15l10-10 8 7Z"></path></svg>
+                Legenda Daulat
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 ml-3 text-yellow-600"><path d="m14 6 4-4 6 6-4 4"></path><path d="m5 11 4 4 6-6-4-4"></path><path d="M2 13 4 8l2 2-2 5Z"></path><path d="M22 13 20 8l-2 2 2 5Z"></path><path d="M12 22 4 15l10-10 8 7Z"></path></svg>
+            </h1>
+            <p class="text-lg text-amber-700">Pengembaraan RPG Institusi Raja Malaysia</p>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <!-- Left Panel -->
+            <div class="lg:col-span-1 space-y-6">
+                <!-- Status Card -->
+                <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-4">
+                    <h3 class="font-bold text-lg mb-4 flex items-center text-gray-800">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 mr-2 text-yellow-500"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        Status Pembesar
+                    </h3>
+                    <div id="stats-container"></div>
+                </div>
+
+                <!-- Inventory -->
+                <div id="inventory-container" class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-4"></div>
+
+                <!-- Achievements -->
+                <div id="achievements-container" class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-4"></div>
+
+                <!-- Settings -->
+                <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-4">
+                    <h3 class="font-bold text-lg mb-3 text-gray-800">Tetapan</h3>
+                    <div class="space-y-3">
+                         <button id="save-game" class="w-full p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">Simpan Permainan</button>
+                         <button id="load-game" class="w-full p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">Muat Permainan</button>
+                         <button id="restart-game" class="w-full p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors mt-4">Mula Semula</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel -->
+            <div class="lg:col-span-3">
+                <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6 min-h-[500px]">
+                    <div class="mb-6">
+                        <div class="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-lg">
+                            <p id="story-text" class="text-gray-800 leading-relaxed text-lg min-h-[150px]"></p>
+                        </div>
+                    </div>
+                    <div id="choices-container" class="space-y-3"></div>
+                    <div id="loading-indicator" class="flex items-center justify-center p-4 hidden">
+                         <div class="flex space-x-2"><div class="w-3 h-3 bg-amber-500 rounded-full animate-bounce"></div><div class="w-3 h-3 bg-amber-500 rounded-full animate-bounce" style="animation-delay: 0.1s"></div><div class="w-3 h-3 bg-amber-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div></div>
+                         <p class="ml-4 text-amber-700">Menaip...</p>
+                    </div>
+                </div>
+
+                 <div class="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-4">
+                    <h4 class="font-bold text-blue-800 mb-2">💡 Tips Permainan:</h4>
+                    <ul class="text-sm text-blue-700 list-disc list-inside space-y-1">
+                        <li><strong>Daulat</strong> meningkat apabila anda membuat keputusan yang bijak dan adil.</li>
+                        <li><strong>Kebijaksanaan</strong> bertambah dengan mendengar dan belajar.</li>
+                        <li><strong>Kesetiaan</strong> diperoleh dengan menjaga kepercayaan rakyat.</li>
+                        <li><strong>Kekuatan</strong> berguna untuk menghadapi cabaran yang sukar.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50">
+        <div id="modal-content" class="modal bg-white rounded-xl shadow-2xl p-6 text-center max-w-lg mx-auto w-full">
+            <!-- Modal content will be injected here -->
+        </div>
+    </div>
+
+    <!--
+    ================================================================
+    GAME DATA: Easy to Edit Section
+    Anda boleh ubah semua teks, pilihan, dan senario di bawah ini
+    untuk mencipta permainan anda sendiri.
+    ================================================================
+    -->
+    <script>
+        const gameData = {
+            states: {
+                perlis: { name: 'Perlis', ruler: 'Raja', difficulty: 1, color: 'bg-yellow-100' },
+                kedah: { name: 'Kedah', ruler: 'Sultan', difficulty: 2, color: 'bg-red-100' },
+                perak: { name: 'Perak', ruler: 'Sultan', difficulty: 2, color: 'bg-gray-100' },
+                selangor: { name: 'Selangor', ruler: 'Sultan', difficulty: 3, color: 'bg-blue-100' },
+            },
+            scenarios: {
+                intro: {
+                    text: "Selamat datang ke alam Tanah Melayu pada abad ke-15! Anda adalah seorang pembesar muda yang baru dilantik sebagai Wakil Raja untuk menjelajahi negeri-negeri Melayu dan memahami konsep Daulat serta Waadat. Misi anda adalah untuk mengeratkan hubungan antara raja dan rakyat, sambil mempelajari nilai-nilai kepimpinan yang murni.",
+                    choices: [ { text: "Mulakan pengembaraan", action: 'start_journey' }]
+                },
+                start_journey: {
+                    text: "Anda kini berada di Perlis. Raja Perlis menyambut kedatangan anda. 'Wahai pembesar muda, tunjukkan kebijaksanaan dalam menangani masalah rakyat.' Seorang petani datang mengadu tentang masalah tanah.",
+                    hasGeminiAdvice: true,
+                    choices: [
+                        { text: "Dengar aduan petani", action: 'listen_farmer', stats: { kebijaksanaan: 10, kesetiaan: 5 } },
+                        { text: "Suruh petani berjumpa pembesar lain", action: 'delegate_problem', stats: { daulat: -10, kesetiaan: -10 } },
+                    ]
+                },
+                listen_farmer: {
+                    text: "Petani bercerita tanahnya dirampas oleh pembesar tempatan. Raja Perlis terkesan dengan sikap anda.",
+                    hasGeminiAdvice: true,
+                    choices: [
+                        { text: "Siasat sendiri kes ini", action: 'investigate_land', stats: { kebijaksanaan: 10, daulat: 5 } },
+                        { text: "Lapor kepada Raja untuk tindakan", action: 'report_to_raja', stats: { kesetiaan: 10 } },
+                    ]
+                },
+                delegate_problem: {
+                    text: "Anda menyuruh petani itu pergi. Petani itu hampa. Tindakan anda menyebabkan rakyat mempersoalkan 'Daulat' anda. Raja Perlis kelihatan kecewa.",
+                    hasGeminiAdvice: true,
+                    choices: [
+                        { text: "Mohon maaf kepada Raja", action: 'apologize_perlis_ruler', stats: { kesetiaan: 10, daulat: 5 } },
+                        { text: "Teruskan ke Kedah", action: 'travel_kedah' }
+                    ]
+                },
+                 apologize_perlis_ruler: {
+                    text: "Anda memohon maaf kepada Raja Perlis. Baginda menghargai kesopanan anda dan memberi peluang kedua untuk mendengar masalah petani.",
+                    choices: [ { text: "Kembali mendengar aduan petani", action: 'listen_farmer', stats: { kebijaksanaan: 5, kesetiaan: 5 } }]
+                },
+                 investigate_land: {
+                    text: "Siasatan anda mendapati pembesar tempatan itu memang bersalah. Anda ada bukti kukuh.",
+                     hasGeminiAdvice: true,
+                    choices: [
+                        { text: "Hadirkan bukti kepada Raja", action: 'present_evidence', stats: { daulat: 15, kesetiaan: 10 } },
+                        { text: "Konfrontasi pembesar korup", action: 'confront_corrupt', stats: { kekuatan: 10, daulat: -5 } },
+                    ]
+                },
+                 report_to_raja: {
+                    text: "Anda melaporkan kepada Raja. Keadilan ditegakkan, tetapi prosesnya lambat. Rakyat melihat anda setia kepada sistem, tetapi kurang berani.",
+                    choices: [ { text: "Teruskan perjalanan ke Kedah", action: 'travel_kedah', stats: { kebijaksanaan: 5 } }]
+                },
+                 confront_corrupt: {
+                    text: "Anda bersemuka dengan pembesar korup. Anda berjaya, tetapi tindakan agresif anda menimbulkan ketidakpuasan hati. Raja menasihati anda tentang diplomasi.",
+                    choices: [ { text: "Meneruskan perjalanan ke Kedah", action: 'travel_kedah', stats: { kekuatan: 5 } }]
+                },
+                present_evidence: {
+                    text: "Raja Perlis sangat gembira. Pembesar korup dihukum. Anda diberi gelaran 'Pembela Keadilan' dan kepercayaan untuk melawat negeri seterusnya.",
+                    achievement: 'Pembela Keadilan',
+                    unlocks: 'kedah',
+                    canDraftDecree: true,
+                    choices: [ { text: "Pergi ke Kedah untuk misi seterusnya", action: 'travel_kedah' }]
+                },
+                 travel_kedah: {
+                    text: "Anda tiba di Kedah. Sultan memberitahu anda tentang perpecahan rakyat mengenai cara menghormati institusi raja. Anda perlu menyatukan mereka.",
+                    hasGeminiAdvice: true,
+                    choices: [
+                        { text: "Adakan majlis dialog terbuka", action: 'open_dialogue_kedah', stats: { kebijaksanaan: 15, kesetiaan: 10 } },
+                        { text: "Gunakan autoriti untuk paksa damai", action: 'force_peace_kedah', stats: { kekuatan: 10, daulat: -10 } }
+                    ]
+                },
+                 force_peace_kedah: {
+                    text: "Anda memaksa mereka berdamai. Perdamaian itu hanya di permukaan. Rakyat bimbang tentang 'Daulat' yang dipaksakan.",
+                    choices: [ { text: "Teruskan ke negeri Perak", action: 'travel_perak', stats: { daulat: -5, kesetiaan: -5 } }]
+                },
+                open_dialogue_kedah: {
+                    text: "Dialog anda berjaya. Anda menjelaskan konsep Waadat dan menyatukan rakyat. Sultan menganugerahkan anda 'Pingat Perpaduan'.",
+                    achievement: 'Pingat Perpaduan',
+                    unlocks: 'perak',
+                    canDraftDecree: true,
+                    choices: [ { text: "Sambung ke negeri Perak", action: 'travel_perak', stats: { daulat: 5, kesetiaan: 5 } } ]
+                },
+                travel_perak: {
+                    text: "Anda tiba di Perak. Sultan bimbang tentang fitnah dari luar yang cuba melemahkan institusi Raja.",
+                    hasGeminiAdvice: true,
+                    choices: [
+                        { text: "Anjurkan kempen kesedaran", action: 'awareness_campaign_perak', stats: { kebijaksanaan: 20, kesetiaan: 15 } },
+                        { text: "Siasat dalang penyebar fitnah", action: 'investigate_fitnah_perak', stats: { kebijaksanaan: 15, kekuatan: 10 } }
+                    ]
+                },
+                awareness_campaign_perak: {
+                    text: "Kempen anda berjaya mendidik rakyat. Kesetiaan mereka utuh dan fitnah pudar.",
+                    unlocks: 'selangor',
+                    choices: [ { text: "Lanjutkan ke Selangor", action: 'travel_selangor' }]
+                },
+                investigate_fitnah_perak: {
+                    text: "Anda menemui dalangnya - pedagang asing. Anda mendedahkan mereka dan menyelamatkan 'Daulat' Raja.",
+                    unlocks: 'selangor',
+                    choices: [ { text: "Lanjutkan ke Selangor", action: 'travel_selangor' }]
+                },
+                 travel_selangor: {
+                    text: "Anda tiba di Selangor. Terdapat perbalahan mengenai pewarisan takhta yang mengancam kestabilan.",
+                    hasGeminiAdvice: true,
+                    choices: [
+                        { text: "Panggil semua pembesar berbincang", action: 'roundtable_discussion_selangor', stats: { kebijaksanaan: 20 } },
+                        { text: "Siasat tuntutan pewaris", action: 'investigate_succession_selangor', stats: { kebijaksanaan: 15 } },
+                    ]
+                },
+                 roundtable_discussion_selangor: {
+                    text: "Anda memimpin perbincangan dan mencari kompromi yang adil. Kestabilan takhta terjamin.",
+                    choices: [{ text: "Laporkan kejayaan & tamatkan misi", action: 'final_mission_report' }]
+                },
+                investigate_succession_selangor: {
+                    text: "Siasatan anda mendedahkan penipuan salah seorang pewaris. Anda menyelamatkan takhta.",
+                    choices: [{ text: "Laporkan kejayaan & tamatkan misi", action: 'final_mission_report' }]
+                },
+                 final_mission_report: {
+                    text: "Anda kembali ke istana utama. Raja Besar menganugerahkan anda gelaran 'Tun Daulat Wibawa'.",
+                    achievement: 'Tun Daulat Wibawa',
+                    canDraftDecree: true,
+                    choices: [{ text: "Tamat permainan", action: 'game_complete_success' }]
+                },
+                game_complete_success: {
+                    text: "Anda telah berjaya! Anda adalah Legenda Daulat yang sebenar! Rakyat hidup aman di bawah naungan Raja yang adil. Tahniah!",
+                    isEnd: true,
+                    choices: [ { text: "Mulakan permainan baharu", action: 'restart' }]
+                },
+            }
+        };
+    </script>
+    
+    <!-- Link to the external JavaScript file -->
+    <!-- Anda boleh hoskan fail 'script.js' ini di server lain -->
+    <script src="https://cdn.jsdelivr.net/gh/cikgumie/rpg_games_js@refs/heads/main/script.js" type="module"></script>
+</body>
+</html>
