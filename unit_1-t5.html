@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legenda Daulat - Pengembaraan RPG</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        @keyframes bounce-in {
+            0% { transform: scale(0.9); opacity: 0; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .modal {
+            animation: bounce-in 0.3s ease-out;
+        }
+        .stat-change {
+            position: absolute;
+            right: -20px;
+            top: 0;
+            animation: fade-up 1s ease-out forwards;
+        }
+        @keyframes fade-up {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-red-50 p-4">
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-6">
+            <h1 class="text-4xl font-bold text-amber-900 mb-2 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 mr-3 text-yellow-600"><path d="m14 6 4-4 6 6-4 4"></path><path d="m5 11 4 4 6-6-4-4"></path><path d="M2 13 4 8l2 2-2 5Z"></path><path d="M22 13 20 8l-2 2 2 5Z"></path><path d="M12 22 4 15l10-10 8 7Z"></path></svg>
+                Legenda Daulat
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 ml-3 text-yellow-600"><path d="m14 6 4-4 6 6-4 4"></path><path d="m5 11 4 4 6-6-4-4"></path><path d="M2 13 4 8l2 2-2 5Z"></path><path d="M22 13 20 8l-2 2 2 5Z"></path><path d="M12 22 4 15l10-10 8 7Z"></path></svg>
+            </h1>
+            <p class="text-lg text-amber-700">Pengembaraan RPG Institusi Raja Malaysia</p>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <!-- Left Panel -->
+            <div class="lg:col-span-1 space-y-6">
+                <!-- Status Card -->
+                <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-4">
+                    <h3 class="font-bold text-lg mb-4 flex items-center text-gray-800">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 mr-2 text-yellow-500"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        Status Pembesar
+                    </h3>
+                    <div id="stats-container"></div>
+                </div>
+
+                <!-- Inventory -->
+                <div id="inventory-container" class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-4"></div>
+
+                <!-- Achievements -->
+                <div id="achievements-container" class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-4"></div>
+
+                <!-- Settings -->
+                <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-4">
+                    <h3 class="font-bold text-lg mb-3 text-gray-800">Tetapan</h3>
+                    <div class="space-y-3">
+                         <button id="save-game" class="w-full p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">Simpan Permainan</button>
+                         <button id="load-game" class="w-full p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">Muat Permainan</button>
+                         <button id="restart-game" class="w-full p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors mt-4">Mula Semula</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel -->
+            <div class="lg:col-span-3">
+                <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6 min-h-[500px]">
+                    <div class="mb-6">
+                        <div class="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-lg">
+                            <p id="story-text" class="text-gray-800 leading-relaxed text-lg min-h-[150px]"></p>
+                        </div>
+                    </div>
+                    <div id="choices-container" class="space-y-3"></div>
+                    <div id="loading-indicator" class="flex items-center justify-center p-4 hidden">
+                         <div class="flex space-x-2"><div class="w-3 h-3 bg-amber-500 rounded-full animate-bounce"></div><div class="w-3 h-3 bg-amber-500 rounded-full animate-bounce" style="animation-delay: 0.1s"></div><div class="w-3 h-3 bg-amber-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div></div>
+                         <p class="ml-4 text-amber-700">Menaip...</p>
+                    </div>
+                </div>
+
+                 <div class="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-4">
+                    <h4 class="font-bold text-blue-800 mb-2">💡 Tips Permainan:</h4>
+                    <ul class="text-sm text-blue-700 list-disc list-inside space-y-1">
+                        <li><strong>Daulat</strong> melambangkan kekuasaan dan kewibawaan Raja. Jaga ia dengan baik.</li>
+                        <li><strong>Kebijaksanaan</strong> membantu anda membuat pilihan yang tepat.</li>
+                        <li><strong>Kesetiaan</strong> adalah asas hubungan antara Raja dan Rakyat.</li>
+                        <li><strong>Kekuatan</strong> mungkin diperlukan untuk menghadapi ancaman secara langsung.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50">
+        <div id="modal-content" class="modal bg-white rounded-xl shadow-2xl p-6 text-center max-w-lg mx-auto w-full">
+            <!-- Modal content will be injected here -->
+        </div>
+    </div>
+
+    <!--
+    ================================================================
+    GAME DATA: Easy to Edit Section
+    Anda boleh ubah semua teks, pilihan, dan senario di bawah ini
+    untuk mencipta permainan anda sendiri.
+    ================================================================
+    -->
+    <script>
+        const gameData = {
+            states: {
+                perlis: { name: 'Perlis', ruler: 'Raja', difficulty: 1 },
+                kedah: { name: 'Kedah', ruler: 'Sultan', difficulty: 2 },
+                perak: { name: 'Perak', ruler: 'Sultan', difficulty: 3 },
+                negeri_sembilan: { name: 'Negeri Sembilan', ruler: 'Yang di-Pertuan Besar', difficulty: 4 },
+            },
+            scenarios: {
+                // --- INTRO & LEARNING ---
+                intro: {
+                    text: "Selamat datang ke alam Tanah Melayu pada abad ke-15! Anda adalah seorang pembesar muda yang diamanahkan untuk memahami dan memperkukuh tiang seri kerajaan, iaitu Institusi Raja. Misi anda adalah untuk memahami makna sebenar Daulat dan Waadat yang menjadi asas pemerintahan.",
+                    choices: [ 
+                        { text: "Terima amanah dan mula belajar", action: 'learn_basics' },
+                        { text: "✨ Minta tunjuk ajar dari Penasihat AI", action: 'learn_from_ai' }
+                    ]
+                },
+                learn_basics: {
+                    text: "Anda bertemu dengan Bendahara, penasihat tua yang bijaksana. Beliau berkata, 'Sebelum engkau mengembara, fahami dahulu asas kerajaan kita. Raja ialah tonggak, dan Kerajaan ialah negeri yang ditadbir secara sah. Ketaatan rakyat dan keadilan Raja adalah tunjangnya.'",
+                    choices: [
+                        { text: "Minta penjelasan tentang 'Waadat'", action: 'explain_waadat' }
+                    ]
+                },
+                explain_waadat: {
+                    text: "Bendahara mengisahkan perjanjian agung (Waadat) antara Seri Teri Buana yang mewakili Raja, dan Demang Lebar Daun yang mewakili rakyat. 'Rakyat berjanji untuk taat setia, dan Raja berjanji untuk memerintah dengan adil. Inilah perjanjian yang mengikat kita semua.'",
+                    stats: { kebijaksanaan: 5 },
+                    choices: [
+                        { text: "Ikrar taat setia kepada Raja dan rakyat", action: 'pledge_allegiance', stats: { kesetiaan: 10 } },
+                        { text: "Tanya, 'Bagaimana jika Raja tidak adil?'", action: 'question_fairness', stats: { kebijaksanaan: 5, daulat: -2 } }
+                    ]
+                },
+                pledge_allegiance: {
+                    text: "Anda menunduk hormat dan berikrar akan menjunjung Waadat tersebut. Bendahara tersenyum. 'Bagus. Hati yang setia adalah perisai pertama seorang pembesar. Kini, pergilah ke Perlis. Di sana, ujian pertama menantimu.'",
+                    choices: [
+                        { text: "Berangkat ke Perlis", action: 'travel_perlis_1' }
+                    ]
+                },
+                question_fairness: {
+                    text: "Bendahara terdiam seketika. 'Soalan yang berani. Raja yang mungkir janji akan hilang Daulatnya. Ingat itu. Pergilah ke Perlis, dan lihat sendiri bagaimana keadilan dan kesetiaan itu saling berkait.'",
+                    choices: [
+                        { text: "Berangkat ke Perlis dengan persoalan di minda", action: 'travel_perlis_1' }
+                    ]
+                },
+
+                // --- MISSION 1: PERLIS - DAULAT & KEADILAN ---
+                travel_perlis_1: {
+                    text: "Anda tiba di Perlis. Raja Perlis menitahkan, 'Seorang pemungut cukai beta dituduh menindas rakyat di sebuah kampung. Beta mahu engkau siasat perkara ini. Ingat, pemungut cukai itu membawa titah beta, tetapi rintihan rakyat juga perlu didengari.'",
+                    hasGeminiAdvice: true,
+                    choices: [
+                        { text: "Jumpa pemungut cukai dahulu", action: 'meet_collector' },
+                        { text: "Siasat di kampung dahulu", action: 'meet_villagers' }
+                    ]
+                },
+                meet_collector: {
+                    text: "Pemungut cukai itu menyambut anda dengan angkuh. 'Hamba hanya menjalankan tugas seperti yang dititahkan Raja. Rakyat memang suka mengadu. Jangan campuri urusan hamba.'",
+                    choices: [
+                        { text: "Percaya katanya dan lapor kembali kepada Raja", action: 'report_collector_is_right', stats: { kesetiaan: -10, kebijaksanaan: -10 } },
+                        { text: "Pergi ke kampung untuk siasatan lanjut", action: 'meet_villagers' }
+                    ]
+                },
+                meet_villagers: {
+                    text: "Di kampung, rakyat dalam ketakutan. Seorang tua memberanikan diri, 'Tuan, cukai yang diminta lebih tinggi dari yang sepatutnya. Kami terpaksa berhutang. Ini bukan titah Raja yang kami kenal, tetapi kezaliman wakilnya.' Mereka menunjukkan bukti resit bayaran yang tinggi.",
+                    stats: { kesetiaan: 5, kebijaksanaan: 5 },
+                    choices: [
+                        { text: "Bawa bukti ini dan pemungut cukai menghadap Raja", action: 'confront_raja' }
+                    ]
+                },
+                report_collector_is_right: {
+                    text: "Anda melaporkan kepada Raja bahawa pemungut cukai itu benar. Raja kelihatan ragu-ragu. Tidak lama kemudian, berita pemberontakan kecil tercetus di kampung itu. Kepercayaan rakyat terhadap anda musnah.",
+                    choices: [
+                        { text: "Cuba perbaiki keadaan (Misi Gagal)", action: 'mission_failed_perlis' }
+                    ]
+                },
+                confront_raja: {
+                    text: "Anda membawa semua bukti menghadap Raja Perlis. Setelah melihat bukti, Raja murka. 'Berani engkau menipu atas nama beta!' Pemungut cukai itu dihukum, dan cukai yang lebih dipulangkan. Raja memuji anda, 'Inilah Daulat yang sebenar! Ia wujud apabila keadilan ditegakkan. Kewibawaan beta bertambah kerana tindakanmu.'",
+                    achievement: "Pembela Keadilan Rakyat",
+                    unlocks: "kedah",
+                    canDraftDecree: true,
+                    stats: { daulat: 15, kebijaksanaan: 10, kesetiaan: 10 },
+                    choices: [
+                        { text: "Bersedia untuk cabaran seterusnya di Kedah", action: 'travel_kedah_2' }
+                    ]
+                },
+                mission_failed_perlis: {
+                    text: "Anda telah gagal mendapatkan kepercayaan rakyat dan Raja. Pengembaraan anda tamat di sini. Anda belajar bahawa kesetiaan buta tanpa kebijaksanaan akan membawa kepada kejatuhan.",
+                    isEnd: true,
+                    choices: [
+                        { text: "Mulakan permainan baharu", action: 'restart' }
+                    ]
+                },
+
+                // --- MISSION 2: KEDAH - PERUBAHAN ZAMAN ---
+                travel_kedah_2: {
+                    text: "Anda tiba di Kedah. Sultan Kedah kelihatan resah. 'Seorang Penasihat British telah ditempatkan di sini. Beliau mahu memperkenalkan sistem pentadbiran baharu yang katanya lebih 'cekap'. Hamba bimbang adat dan kuasa Raja akan terhakis.'",
+                    hasGeminiAdvice: true,
+                    choices: [
+                        { text: "Bersetuju dengan sistem baharu demi kemajuan", action: 'agree_british_system', stats: { kekuatan: -10, kebijaksanaan: -5 } },
+                        { text: "Bantah campur tangan British secara terang-terangan", action: 'protest_british', stats: { kekuatan: 10, daulat: -5 } },
+                        { text: "Cadangkan untuk berunding dan mencari jalan tengah", action: 'negotiate_british', stats: { kebijaksanaan: 15 } }
+                    ]
+                },
+                 // Further scenarios for Kedah and other states to be developed here...
+                 // This provides a solid foundation based on Unit 1.
+                
+                // --- Fallback Endings ---
+                final_mission_report: {
+                    text: "Anda kembali ke istana utama. Raja Besar menganugerahkan anda gelaran 'Tun Daulat Wibawa'.",
+                    achievement: 'Tun Daulat Wibawa',
+                    canDraftDecree: true,
+                    choices: [{ text: "Tamat permainan", action: 'game_complete_success' }]
+                },
+                game_complete_success: {
+                    text: "Anda telah berjaya! Anda adalah Legenda Daulat yang sebenar! Rakyat hidup aman di bawah naungan Raja yang adil. Tahniah!",
+                    isEnd: true,
+                    choices: [ { text: "Mulakan permainan baharu", action: 'restart' }]
+                },
+            }
+        };
+    </script>
+    
+    <!-- Link to the external JavaScript file -->
+    <!-- Anda boleh hoskan fail 'script.js' ini di server lain -->
+    <script src="https://cdn.jsdelivr.net/gh/cikgumie/rpg_games_js@main/script.js" type="module"></script>
+</body>
+</html>
